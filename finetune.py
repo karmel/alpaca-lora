@@ -31,13 +31,19 @@ LORA_ALPHA = 16
 LORA_DROPOUT = 0.05
 VAL_SET_SIZE = 2000
 
+if "PATH_TO_CKPT" in os.environ:
+    path_to_ckpt: str = os.environ["PATH_TO_CKPT"]
+else:
+    raise ValueError(('No env variable $PATH_TO_CKPT found; '
+                      'please set $PATH_TO_CKPT and retry.'))
+
 model = LlamaForCausalLM.from_pretrained(
-    "decapoda-research/llama-7b-hf",
+    path_to_ckpt,
     load_in_8bit=True,
     device_map="auto",
 )
 tokenizer = LlamaTokenizer.from_pretrained(
-    "decapoda-research/llama-7b-hf", add_eos_token=True
+    path_to_ckpt, add_eos_token=True
 )
 
 model = prepare_model_for_int8_training(model)
