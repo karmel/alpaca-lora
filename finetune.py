@@ -34,6 +34,12 @@ else:
     raise ValueError(('No env variable $PATH_TO_CKPT found; '
                       'please set $PATH_TO_CKPT and retry.'))
 
+if "DATA_DIR" in os.environ:
+    data_dir: str = os.environ["DATA_DIR"]
+else:
+    raise ValueError(('No env variable $DATA_DIR found; '
+                      'please set $DATA_DIR and retry.'))
+
 model = LlamaForCausalLM.from_pretrained(
     path_to_ckpt,
     load_in_8bit=True,
@@ -65,26 +71,11 @@ val_data = train_val["test"]
 
 
 def generate_prompt(data_point):
-    # sorry about the formatting disaster gotta move fast
-    if data_point["input"]:
-        return f"""Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+    return f"""<gesture>
+{data_point["lines"]}
 
-### Instruction:
-{data_point["instruction"]}
-
-### Input:
-{data_point["input"]}
-
-### Response:
-{data_point["output"]}"""
-    else:
-        return f"""Below is an instruction that describes a task. Write a response that appropriately completes the request.
-
-### Instruction:
-{data_point["instruction"]}
-
-### Response:
-{data_point["output"]}"""
+<response>
+{data_point["label"]}"""
 
 
 def tokenize(prompt):
