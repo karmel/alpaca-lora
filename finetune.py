@@ -90,7 +90,7 @@ def tokenize(prompt):
         prompt,
         truncation=True,
         max_length=CUTOFF_LEN + 1,
-        padding="max_length",
+        padding=True,
     )
     return {
         "input_ids": result["input_ids"][:-1],
