@@ -22,7 +22,7 @@ BATCH_SIZE = 128
 GRADIENT_ACCUMULATION_STEPS = BATCH_SIZE // MICRO_BATCH_SIZE
 EPOCHS = 3  # we don't need 3 tbh
 LEARNING_RATE = 3e-4  # the Karpathy constant
-CUTOFF_LEN = 1000  # 256 accounts for about 96% of the data
+CUTOFF_LEN = 256  # 256 accounts for about 96% of the data
 LORA_R = 8
 LORA_ALPHA = 16
 LORA_DROPOUT = 0.05
@@ -76,11 +76,13 @@ val_data = train_val["test"]
 
 
 def generate_prompt(data_point):
-    return f"""<gesture>
+    prompt = f"""<gesture>
 {data_point["lines"]}
 
 <response>
 {data_point["label"]}"""
+    print(prompt)
+    return prompt
 
 
 def tokenize(prompt):
@@ -90,7 +92,7 @@ def tokenize(prompt):
         prompt,
         truncation=True,
         max_length=CUTOFF_LEN + 1,
-        padding=True,
+        padding="max_length",
     )
     return {
         "input_ids": result["input_ids"][:-1],
