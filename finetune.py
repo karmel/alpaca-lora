@@ -26,7 +26,7 @@ CUTOFF_LEN = 256  # 256 accounts for about 96% of the data
 LORA_R = 8
 LORA_ALPHA = 16
 LORA_DROPOUT = 0.05
-VAL_SET_SIZE = 2000
+VAL_SET_SIZE = 20 # TODO: this only works for the mini-test.
 
 if "PATH_TO_CKPT" in os.environ:
     path_to_ckpt: str = os.environ["PATH_TO_CKPT"]
@@ -61,7 +61,12 @@ config = LoraConfig(
 )
 model = get_peft_model(model, config)
 tokenizer.pad_token_id = 0  # unk. we want this to be different from the eos token
-data = load_dataset("json", data_files="alpaca_data.json")
+
+data_files = [os.path.join(data_dir, fname) for fname in os.walk(data_dir)
+              if fname[-5] == '.json']
+print('Data files: ')
+print(data_files)
+data = load_dataset("json", data_files=data_files)
 
 train_val = data["train"].train_test_split(
     test_size=VAL_SET_SIZE, shuffle=True, seed=42
@@ -112,7 +117,7 @@ trainer = transformers.Trainer(
         save_strategy="steps",
         eval_steps=200,
         save_steps=200,
-        output_dir="lora-alpaca",
+        output_dir="lora-gesture",
         save_total_limit=3,
         load_best_model_at_end=True,
     ),
@@ -127,6 +132,6 @@ model.state_dict = (
 
 trainer.train()
 
-model.save_pretrained("lora-alpaca")
+model.save_pretrained("lora-gesture")
 
 print("\n If there's a warning about missing keys above, please disregard :)")
