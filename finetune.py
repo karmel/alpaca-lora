@@ -39,7 +39,7 @@ if "DATA_DIR" in os.environ:
 else:
     raise ValueError(('No env variable $DATA_DIR found; '
                       'please set $DATA_DIR and retry.'))
-
+"""
 model = LlamaForCausalLM.from_pretrained(
     path_to_ckpt,
     load_in_8bit=True,
@@ -61,8 +61,8 @@ config = LoraConfig(
 )
 model = get_peft_model(model, config)
 tokenizer.pad_token_id = 0  # unk. we want this to be different from the eos token
-
-data_files = [os.path.join(data_dir, fname) for fname in os.walk(data_dir)
+"""
+data_files = [os.path.join(data_dir, fname) for fname in os.listdir(data_dir)
               if fname[-5] == '.json']
 print('Data files: ')
 print(data_files)
