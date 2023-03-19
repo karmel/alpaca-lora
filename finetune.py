@@ -63,7 +63,7 @@ model = get_peft_model(model, config)
 tokenizer.pad_token_id = 0  # unk. we want this to be different from the eos token
 """
 data_files = [os.path.join(data_dir, fname) for fname in os.listdir(data_dir)
-              if fname[-5] == '.json']
+              if fname[-5:] == '.json']
 print('Data files: ')
 print(data_files)
 data = load_dataset("json", data_files=data_files)
