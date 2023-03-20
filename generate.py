@@ -73,8 +73,6 @@ def evaluate(
     prompt = generate_prompt(input_sequence)
     inputs = tokenizer(prompt, return_tensors="pt")
 
-    stop_sequence = tokenizer("<")["input_ids"]
-
     input_ids = inputs["input_ids"].to(device)
     generation_config = GenerationConfig(
         max_new_tokens=max_new_tokens,
@@ -89,10 +87,16 @@ def evaluate(
             input_ids=input_ids,
             generation_config=generation_config,
             return_dict_in_generate=True,
-            output_scores=True,
-            eos_token_id=stop_sequence
+            output_scores=True
         )
     s = generation_output.sequences[0]
+    stop_sequence = tokenizer("<")["input_ids"][0]
+    try:
+        stop_sequence_index = s.index(stop_sequence)
+        s = s[:stop_sequence_index]
+    except ValueError as e:
+        print(e)
+
     output = tokenizer.decode(s)
     print("Output: ")
     print(output)
