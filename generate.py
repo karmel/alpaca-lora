@@ -10,6 +10,9 @@ from transformers import LlamaTokenizer, LlamaForCausalLM, GenerationConfig
 
 tokenizer = LlamaTokenizer.from_pretrained("decapoda-research/llama-7b-hf")
 
+print("Gesture ID")
+print(tokenizer("<gesture>"))
+
 if torch.cuda.is_available():
     device = "cuda"
 else:
@@ -63,7 +66,7 @@ model.eval()
 
 def evaluate(
         input_sequence,
-        max_new_tokens=1,
+        max_new_tokens=256,
         temperature=0,
         top_p=0.75,
         top_k=1,
@@ -86,7 +89,8 @@ def evaluate(
             input_ids=input_ids,
             generation_config=generation_config,
             return_dict_in_generate=True,
-            output_scores=True
+            output_scores=True,
+            #eos_token_id=
         )
     s = generation_output.sequences[0]
     output = tokenizer.decode(s)
