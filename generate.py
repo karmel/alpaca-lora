@@ -73,14 +73,13 @@ model.eval()
 
 def evaluate(
         instruction,
-        input=None,
         temperature=0.1,
         top_p=0.75,
         top_k=40,
         num_beams=4,
         **kwargs,
 ):
-    prompt = generate_prompt(instruction, input)
+    prompt = generate_prompt(instruction)
     inputs = tokenizer(prompt, return_tensors="pt")
     input_ids = inputs["input_ids"].to(device)
     generation_config = GenerationConfig(
