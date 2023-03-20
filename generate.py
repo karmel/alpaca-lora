@@ -97,7 +97,7 @@ def evaluate(
 
     output = tokenizer.decode(truncated_s)
     print("Output: ")
-    print(output)
+    print(tokenizer.decode(s))
     return output.split("<response>")[-1].strip()
 
 
