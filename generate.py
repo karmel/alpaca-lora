@@ -73,7 +73,7 @@ def evaluate(
     prompt = generate_prompt(input_sequence)
     inputs = tokenizer(prompt, return_tensors="pt")
 
-    stop_sequence = tokenizer("<")["input_ids"].to(device)
+    stop_sequence = tokenizer("<")["input_ids"]
 
     input_ids = inputs["input_ids"].to(device)
     generation_config = GenerationConfig(
