@@ -75,8 +75,8 @@ def evaluate(
         instruction,
         temperature=0.1,
         top_p=0.75,
-        top_k=40,
-        num_beams=4,
+        top_k=10,
+        num_beams=2,
         **kwargs,
 ):
     prompt = generate_prompt(instruction)
