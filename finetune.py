@@ -31,7 +31,7 @@ def generate_prompt_from_dict(data_point):
 
 
 def generate_prompt(gesture, output=None):
-    prompt = ("This is a series of points made by human fingers touching an x, y plane. "
+    prompt = ("<instruction>This is a series of points made by human fingers touching an x, y plane. "
               "Each point includes a timedelta since the last point, x and y coordinates, and a radius. "
               "Determine what gesture the human was making on the plane.")
     prompt = prompt + f"""
