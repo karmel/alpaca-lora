@@ -44,7 +44,7 @@ def generate_prompt(gesture, output=None):
     return prompt
 
 
-def tokenize(prompt):
+def tokenize(prompt, tokenizer):
     # there's probably a way to do this with the tokenizer settings
     # but again, gotta move fast
     result = tokenizer(
@@ -94,7 +94,7 @@ def run_finetuning(path_to_ckpt, data_dir):
     train_data = train_val["train"]
     val_data = train_val["test"]
 
-    train_data = train_data.shuffle().map(lambda x: tokenize(generate_prompt_from_dict(x)))
+    train_data = train_data.shuffle().map(lambda x: tokenize(generate_prompt_from_dict(x), tokenizer))
     val_data = val_data.shuffle().map(lambda x: generate_prompt_from_dict(generate_prompt(x)))
 
     trainer = transformers.Trainer(
