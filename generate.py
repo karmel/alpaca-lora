@@ -90,14 +90,12 @@ def evaluate(
             output_scores=True
         )
     s = generation_output.sequences[0]
-    stop_sequence = tokenizer("<")["input_ids"][0]
-    try:
-        stop_sequence_index = s.index(stop_sequence)
-        s = s[:stop_sequence_index]
-    except ValueError as e:
-        print(e)
 
-    output = tokenizer.decode(s)
+    # Truncate output at the stop sequence
+    stop_sequence = tokenizer("<")["input_ids"][0]
+    truncated_s = s[:(s == stop_sequence).nonzero().squeeze()]
+
+    output = tokenizer.decode(truncated_s)
     print("Output: ")
     print(output)
     return output.split("<response>")[-1].strip()
