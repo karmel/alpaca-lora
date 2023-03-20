@@ -95,7 +95,7 @@ def run_finetuning(path_to_ckpt, data_dir):
     val_data = train_val["test"]
 
     train_data = train_data.shuffle().map(lambda x: tokenize(generate_prompt_from_dict(x), tokenizer))
-    val_data = val_data.shuffle().map(lambda x: generate_prompt_from_dict(x))
+    val_data = val_data.shuffle().map(lambda x: tokenize(generate_prompt_from_dict(x), tokenizer))
 
     trainer = transformers.Trainer(
         model=model,
