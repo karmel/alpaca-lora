@@ -15,7 +15,7 @@ from peft import (
 
 # optimized for RTX 4090. for larger GPUs, increase some of these?
 MICRO_BATCH_SIZE = 4  # this could actually be 5 but i like powers of 2
-BATCH_SIZE = 128
+BATCH_SIZE = 56
 GRADIENT_ACCUMULATION_STEPS = BATCH_SIZE // MICRO_BATCH_SIZE
 EPOCHS = 100  # we don't need 3 tbh
 LEARNING_RATE = 3e-4  # the Karpathy constant
