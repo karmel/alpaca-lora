@@ -99,7 +99,9 @@ def evaluate(
         )
     s = generation_output.sequences[0]
     output = tokenizer.decode(s)
-    return output.split("<response>")[1].strip()
+    print("Output: ")
+    print(output)
+    return output.split("<response>")[-1].strip()
 
 
 if __name__ == "__main__":
