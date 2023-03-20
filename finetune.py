@@ -80,7 +80,7 @@ def generate_prompt(data_point):
 {data_point["lines"]}
 
 <response>
-{data_point["label"]}"""
+{data_point["output"]}"""
     print(prompt)
     return prompt
 
