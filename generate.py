@@ -4,6 +4,8 @@ import torch
 from peft import PeftModel
 import transformers
 
+from finetune import generate_prompt
+
 assert (
     "LlamaTokenizer" in transformers._import_structure["models.llama"]
 ), "LLaMA is now in HuggingFace's main branch.\nPlease reinstall it: pip uninstall transformers && pip install git+https://github.com/huggingface/transformers.git"
@@ -59,30 +61,23 @@ else:
         device_map={"": device},
     )
 
-def generate_prompt(instruction):
-    prompt = f"""<gesture>
-    {instruction}
-
-    <response>
-    """
-    return prompt
-
-
 model.eval()
 
 
 def evaluate(
-        instruction,
-        temperature=0.1,
+        input_sequence,
+        max_new_tokens=1,
+        temperature=0,
         top_p=0.75,
-        top_k=10,
-        num_beams=2,
+        top_k=1,
+        num_beams=1,
         **kwargs,
 ):
-    prompt = generate_prompt(instruction)
+    prompt = generate_prompt(input_sequence)
     inputs = tokenizer(prompt, return_tensors="pt")
     input_ids = inputs["input_ids"].to(device)
     generation_config = GenerationConfig(
+        max_new_tokens=max_new_tokens,
         temperature=temperature,
         top_p=top_p,
         top_k=top_k,
@@ -94,8 +89,7 @@ def evaluate(
             input_ids=input_ids,
             generation_config=generation_config,
             return_dict_in_generate=True,
-            output_scores=True,
-            max_new_tokens=2048,
+            output_scores=True
         )
     s = generation_output.sequences[0]
     output = tokenizer.decode(s)

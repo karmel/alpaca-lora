@@ -75,12 +75,21 @@ train_data = train_val["train"]
 val_data = train_val["test"]
 
 
-def generate_prompt(data_point):
-    prompt = f"""<gesture>
-{data_point["lines"]}
+def generate_prompt_from_dict(data_point):
+    return generate_prompt(data_point['input'], output=data_point['output'])
+
+
+def generate_prompt(gesture, output=None):
+    prompt = ("This is a series of points made by human fingers touching an x, y plane. "
+              "Each point includes a timedelta since the last point, x and y coordinates, and a radius. "
+              "Determine what gesture the human was making on the plane.")
+    prompt = prompt + f"""
+<gesture>
+{gesture}
 
 <response>
-{data_point["output"]}"""
+"""
+    if output: prompt = prompt + output
     return prompt
 
 
@@ -99,8 +108,8 @@ def tokenize(prompt):
     }
 
 
-train_data = train_data.shuffle().map(lambda x: tokenize(generate_prompt(x)))
-val_data = val_data.shuffle().map(lambda x: tokenize(generate_prompt(x)))
+train_data = train_data.shuffle().map(lambda x: tokenize(generate_prompt_from_dict(x)))
+val_data = val_data.shuffle().map(lambda x: generate_prompt_from_dict(generate_prompt(x)))
 
 trainer = transformers.Trainer(
     model=model,
