@@ -26,7 +26,7 @@ CUTOFF_LEN = 256  # 256 accounts for about 96% of the data
 LORA_R = 8
 LORA_ALPHA = 16
 LORA_DROPOUT = 0.05
-VAL_SET_SIZE = 2 # TODO: this only works for the mini-test.
+VAL_SET_SIZE = 20 # TODO: this only works for the mini-test.
 
 if "PATH_TO_CKPT" in os.environ:
     path_to_ckpt: str = os.environ["PATH_TO_CKPT"]
@@ -81,7 +81,6 @@ def generate_prompt(data_point):
 
 <response>
 {data_point["output"]}"""
-    print(prompt)
     return prompt
 
 

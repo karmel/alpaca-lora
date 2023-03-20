@@ -1,7 +1,8 @@
+import sys
+
 import torch
 from peft import PeftModel
 import transformers
-import gradio as gr
 
 assert (
     "LlamaTokenizer" in transformers._import_structure["models.llama"]
@@ -21,6 +22,7 @@ try:
 except:
     pass
 
+weights = 'lora-gesture'
 if device == "cuda":
     model = LlamaForCausalLM.from_pretrained(
         "decapoda-research/llama-7b-hf",
@@ -29,7 +31,8 @@ if device == "cuda":
         device_map="auto",
     )
     model = PeftModel.from_pretrained(
-        model, "tloen/alpaca-lora-7b",
+        model,
+        weights,
         torch_dtype=torch.float16
     )
 elif device == "mps":
@@ -40,7 +43,7 @@ elif device == "mps":
     )
     model = PeftModel.from_pretrained(
         model,
-        "tloen/alpaca-lora-7b",
+        weights,
         device_map={"": device},
         torch_dtype=torch.float16,
     )
@@ -52,28 +55,17 @@ else:
     )
     model = PeftModel.from_pretrained(
         model,
-        "tloen/alpaca-lora-7b",
+        weights,
         device_map={"": device},
     )
 
-def generate_prompt(instruction, input=None):
-    if input:
-        return f"""Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+def generate_prompt(instruction):
+    prompt = f"""<gesture>
+    {instruction}
 
-### Instruction:
-{instruction}
-
-### Input:
-{input}
-
-### Response:"""
-    else:
-        return f"""Below is an instruction that describes a task. Write a response that appropriately completes the request.
-
-### Instruction:
-{instruction}
-
-### Response:"""
+    <response>
+    """
+    return prompt
 
 
 model.eval()
@@ -108,50 +100,11 @@ def evaluate(
         )
     s = generation_output.sequences[0]
     output = tokenizer.decode(s)
-    return output.split("### Response:")[1].strip()
+    return output.split("<response>")[1].strip()
 
 
-gr.Interface(
-    fn=evaluate,
-    inputs=[
-        gr.components.Textbox(
-            lines=2, label="Instruction", placeholder="Tell me about alpacas."
-        ),
-        gr.components.Textbox(
-            lines=2, label="Input", placeholder="none"
-        ),
-        gr.components.Slider(minimum=0, maximum=1, value=0.1, label="Temperature"),
-        gr.components.Slider(minimum=0, maximum=1, value=0.75, label="Top p"),
-        gr.components.Slider(minimum=0, maximum=100, step=1, value=40, label="Top k"),
-        gr.components.Slider(minimum=0, maximum=4, step=1, value=4, label="Beams"),
-    ],
-    outputs=[
-        gr.inputs.Textbox(
-            lines=5,
-            label="Output",
-        )
-    ],
-    title="🦙🌲 Alpaca-LoRA",
-    description="Alpaca-LoRA is a 7B-parameter LLaMA model finetuned to follow instructions. It is trained on the [Stanford Alpaca](https://github.com/tatsu-lab/stanford_alpaca) dataset and makes use of the Huggingface LLaMA implementation. For more information, please visit [the project's website](https://github.com/tloen/alpaca-lora).",
-).launch(share=True)
-
-# Old testing code follows.
-
-"""
 if __name__ == "__main__":
-    # testing code for readme
-    for instruction in [
-        "Tell me about alpacas.",
-        "Tell me about the president of Mexico in 2019.",
-        "Tell me about the king of France in 2019.",
-        "List all Canadian provinces in alphabetical order.",
-        "Write a Python program that prints the first 10 Fibonacci numbers.",
-        "Write a program that prints the numbers from 1 to 100. But for multiples of three print 'Fizz' instead of the number and for the multiples of five print 'Buzz'. For numbers which are multiples of both three and five print 'FizzBuzz'.",
-        "Tell me five words that rhyme with 'shock'.",
-        "Translate the sentence 'I have no mouth but I must scream' into Spanish.",
-        "Count up from 1 to 500.",
-    ]:
-        print("Instruction:", instruction)
+    for instruction in sys.argv[1:]:
+        print("Input:", instruction)
         print("Response:", evaluate(instruction))
         print()
-"""
