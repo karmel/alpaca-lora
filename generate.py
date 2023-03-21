@@ -91,7 +91,7 @@ def evaluate(
             output_scores=True
         )
     s = generation_output.sequences[0]
-
+    print(s)
     # Truncate output at the stop sequence
     #stop_sequence = tokenizer("<")["input_ids"][0]
     #truncated_s = s #[:(s == stop_sequence).nonzero().squeeze()]
