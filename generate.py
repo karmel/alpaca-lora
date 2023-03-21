@@ -93,7 +93,7 @@ def evaluate(
 
     # Truncate output at the stop sequence
     stop_sequence = tokenizer("<")["input_ids"][0]
-    truncated_s = s[:(s == stop_sequence).nonzero().squeeze()]
+    truncated_s = s #[:(s == stop_sequence).nonzero().squeeze()]
 
     output = tokenizer.decode(truncated_s)
     print("Output: ")
