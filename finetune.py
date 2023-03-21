@@ -17,13 +17,13 @@ from peft import (
 MICRO_BATCH_SIZE = 2  # this could actually be 5 but i like powers of 2
 BATCH_SIZE = 32
 GRADIENT_ACCUMULATION_STEPS = BATCH_SIZE // MICRO_BATCH_SIZE
-EPOCHS = 300  # we don't need 3 tbh
+EPOCHS = 600  # we don't need 3 tbh
 LEARNING_RATE = 3e-4  # the Karpathy constant
-CUTOFF_LEN = 512
+CUTOFF_LEN = 800
 LORA_R = 8
 LORA_ALPHA = 16
 LORA_DROPOUT = 0.05
-VAL_SET_SIZE = 20 # TODO: this only works for the mini-test.
+VAL_SET_SIZE = 50 # TODO: this only works for the mini-test.
 
 
 def generate_prompt_from_dict(data_point):
@@ -83,8 +83,7 @@ def run_finetuning(path_to_ckpt, data_dir):
 
     data_files = [os.path.join(data_dir, fname) for fname in os.listdir(data_dir)
                   if fname[-5:] == '.json']
-    print('Data files: ')
-    print(data_files)
+
     data = load_dataset("json", data_files=data_files)
 
     train_val = data["train"].train_test_split(
