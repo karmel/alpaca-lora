@@ -75,9 +75,6 @@ def evaluate(
 
     input_ids = inputs["input_ids"].to(device)
 
-    print("Input length: ")
-    print(len(input_ids))
-
     generation_config = GenerationConfig(
         max_new_tokens=max_new_tokens,
         temperature=temperature,
@@ -102,6 +99,8 @@ def evaluate(
     output = tokenizer.decode(s)
     print("Output: ")
     print(output)
+    print("Output length: ")
+    print(len(s))
 
     return output.split("<response>")[-1].strip()
 
