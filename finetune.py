@@ -14,12 +14,12 @@ from peft import (
 
 
 # optimized for RTX 4090. for larger GPUs, increase some of these?
-MICRO_BATCH_SIZE = 4  # this could actually be 5 but i like powers of 2
-BATCH_SIZE = 128
+MICRO_BATCH_SIZE = 2  # this could actually be 5 but i like powers of 2
+BATCH_SIZE = 32
 GRADIENT_ACCUMULATION_STEPS = BATCH_SIZE // MICRO_BATCH_SIZE
 EPOCHS = 300  # we don't need 3 tbh
 LEARNING_RATE = 3e-4  # the Karpathy constant
-CUTOFF_LEN = 256
+CUTOFF_LEN = 512
 LORA_R = 8
 LORA_ALPHA = 16
 LORA_DROPOUT = 0.05
@@ -31,9 +31,8 @@ def generate_prompt_from_dict(data_point):
 
 
 def generate_prompt(gesture, output=None):
-    prompt = ("<instruction>This is a series of points made by human fingers touching an x, y plane. "
-              "Each point includes a timedelta since the last point, x and y coordinates, and a radius. "
-              "Determine what gesture the human was making on the plane.")
+    prompt = ("<instruction>These are points made by human fingers touching an x, y plane. "
+              "Determine what gesture was made.")
     prompt = prompt + f"""
 <gesture>
 {gesture}
