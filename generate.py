@@ -92,12 +92,15 @@ def evaluate(
     s = generation_output.sequences[0]
 
     # Truncate output at the stop sequence
-    stop_sequence = tokenizer("<")["input_ids"][0]
-    truncated_s = s #[:(s == stop_sequence).nonzero().squeeze()]
+    #stop_sequence = tokenizer("<")["input_ids"][0]
+    #truncated_s = s #[:(s == stop_sequence).nonzero().squeeze()]
 
-    output = tokenizer.decode(truncated_s)
+    output = tokenizer.decode(s)
     print("Output: ")
-    print(tokenizer.decode(s))
+    print(output)
+    print("Total length: ")
+    print(len(output))
+    
     return output.split("<response>")[-1].strip()
 
 
